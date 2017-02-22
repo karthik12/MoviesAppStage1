@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="most_popular">MostPopular</string>
+    <string name="highest_rated">HighestRated</string>
+    <string name="key_not_found">Movies Api Key not found</string>
+    <string name="refresh">Refresh</string>
+    <string name="network_not_available">OOPS! Network not available</string>
+</resources>
