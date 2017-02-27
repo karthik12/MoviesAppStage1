@@ -22,6 +22,7 @@ import java.util.List;
 
 import static com.example.karthikeyanp.popularmovies.MovieUtils.buildUrl;
 import static com.example.karthikeyanp.popularmovies.MovieUtils.getApiKey;
+import static com.example.karthikeyanp.popularmovies.MovieUtils.getMovieListFromJson;
 import static com.example.karthikeyanp.popularmovies.MovieUtils.isOnline;
 import static com.example.karthikeyanp.popularmovies.NetworkFragment.getInstance;
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
         mNetworkFragment = getInstance(getSupportFragmentManager());
         if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_JSON)) {
             activityRecreation = true;
-            updateAdapter(MovieUtils.getMovieListFromJson(savedInstanceState.getString(MOVIE_LIST_JSON)));
+            updateAdapter(getMovieListFromJson(savedInstanceState.getString(MOVIE_LIST_JSON)));
             sortOrder = (SortOrder) savedInstanceState.getSerializable(SORT_ORDER);
         }
 
@@ -122,8 +123,10 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(MOVIE_LIST_JSON, MovieUtils.getJsonString(movieList));
-        outState.putSerializable(SORT_ORDER, sortOrder);
+        if (movieList != null && !movieList.isEmpty()) {
+            outState.putString(MOVIE_LIST_JSON, MovieUtils.getJsonString(movieList));
+            outState.putSerializable(SORT_ORDER, sortOrder);
+        }
     }
 
     @Override
