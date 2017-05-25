@@ -4,9 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +22,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.karthikeyanp.popularmovies.database.MovieContract;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.example.karthikeyanp.popularmovies.MovieUtils.buildUrl;
 import static com.example.karthikeyanp.popularmovies.MovieUtils.getApiKey;
@@ -26,18 +36,23 @@ import static com.example.karthikeyanp.popularmovies.MovieUtils.getMovieListFrom
 import static com.example.karthikeyanp.popularmovies.MovieUtils.isOnline;
 import static com.example.karthikeyanp.popularmovies.NetworkFragment.getInstance;
 
-public class MainActivity extends AppCompatActivity implements DownloadCallback<Result>, NetworkFragment.ActivityCallback {
+public class MainActivity extends AppCompatActivity implements DownloadCallback<Result>, NetworkFragment.ActivityCallback, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MoviesActivity";
     private static final String MOVIE_LIST_JSON = "movie_list_json";
     private static final String EXTRA_MOVIE = "movie";
     private static final String SORT_ORDER = "sort_order";
-    private RecyclerView mRecyclerView;
-    private LinearLayout networkView;
+    public static final int LOADER_ID = 123;
+    @BindView(R.id.movies_grid_view)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.network_view)
+    LinearLayout networkView;
     private MoviesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<Movie> movieList;
+    private List<Movie> movieList = new ArrayList<>();
     NetworkFragment mNetworkFragment;
+    @BindView(R.id.toolbar_main)
+    Toolbar toolbar;
     private boolean mDownloading = false;
     private SortOrder sortOrder = SortOrder.TOP_RATED;
     private boolean activityRecreation = false;
@@ -74,11 +89,9 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
 
     private void initUI() {
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.movies_grid_view);
-        networkView = (LinearLayout) findViewById(R.id.network_view);
-        mLayoutManager = new GridLayoutManager(this, 2);
+        mLayoutManager = new GridLayoutManager(this, MovieUtils.calculateNoOfColumns(getApplicationContext()));
         mRecyclerView.setLayoutManager(mLayoutManager);
         MoviesAdapter.OnRecycleViewItemClickListener clickListener = new MoviesAdapter.OnRecycleViewItemClickListener() {
 
@@ -116,8 +129,16 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
                 sortOrder = SortOrder.POPULAR;
                 startDownload(sortOrder);
                 return true;
+            case R.id.menu_fav:
+                sortOrder = SortOrder.FAV;
+                fetchFavMovies();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchFavMovies() {
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -140,6 +161,16 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
             menu.findItem(R.id.menu_highest_rated).setVisible(false);
         } else {
             menu.findItem(R.id.menu_highest_rated).setVisible(true);
+        }
+
+        if (sortOrder.getValue().equalsIgnoreCase(SortOrder.FAV.getValue())) {
+            menu.findItem(R.id.menu_fav).setVisible(false);
+        } else {
+            if (MovieUtils.hasFavourite(this)) {
+                menu.findItem(R.id.menu_fav).setVisible(true);
+            } else {
+                menu.findItem(R.id.menu_fav).setVisible(false);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -174,7 +205,9 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
         mRecyclerView.setClickable(true);
         mRecyclerView.setEnabled(true);
         if (!activityRecreation) {
-            startDownload(sortOrder);
+            if (sortOrder != SortOrder.FAV) {
+                startDownload(sortOrder);
+            }
         }
     }
 
@@ -240,5 +273,48 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback<
         } catch (Exception e) {
             Log.i(TAG, "Exception occurred during un-registering network receiver");
         }
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                this,
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor movieCursor) {
+        if (sortOrder != SortOrder.FAV) {
+            return;
+        }
+        if (movieList != null) {
+            movieList.clear();
+        }
+        if (movieCursor != null && movieCursor.moveToFirst()) {
+            do {
+                int movieId = movieCursor.getInt(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_ID));
+                String moviePosterImgUrl = movieCursor.getString(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER));
+                String movieBackdropImgUrl = movieCursor.getString(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_BACKDROP_URI));
+                String movieTitle = movieCursor.getString(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE));
+                String movieSynopsis = movieCursor.getString(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_SYNOPSIS));
+                String movieReleaseDate = movieCursor.getString(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE));
+                float movieVoteAvg = movieCursor.getFloat(movieCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_VOTE_AVERAGE));
+                int[] array = new int[0];
+                Movie info = new Movie(moviePosterImgUrl, "", movieSynopsis, movieReleaseDate, array, movieId, movieTitle, "", movieTitle, movieBackdropImgUrl, 0.0f, 0, true, movieVoteAvg);
+
+                movieList.add(info);
+            } while (movieCursor.moveToNext());
+        }
+        onlineViewChanges();
+        updateAdapter(movieList);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

@@ -2,7 +2,14 @@
     <string name="app_name">PopularMovies</string>
     <string name="most_popular">MostPopular</string>
     <string name="highest_rated">HighestRated</string>
+    <string name="favourite">Favourite</string>
     <string name="key_not_found">Movies Api Key not found</string>
     <string name="refresh">Refresh</string>
     <string name="network_not_available">OOPS! Network not available</string>
+    <string name="synopsis">Synopsis</string>
+    <string name="trailer">Trailer</string>
+    <string name="review">Review</string>
+    <string name="app_not_found">Youtube app is not present</string>
+    <string name="no_internet">No Internet Connection!</string>
+    <string name="no_result">Sorry! No Results</string>
 </resources>

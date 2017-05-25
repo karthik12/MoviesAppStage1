@@ -3,6 +3,7 @@ package com.example.karthikeyanp.popularmovies;
 import android.app.Application;
 import android.content.Context;
 
+import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -16,6 +17,7 @@ public class MoviesApplication extends Application {
     public void onCreate() {
         sContext = getApplicationContext();
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.

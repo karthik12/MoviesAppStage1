@@ -46,72 +46,32 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:orientation="vertical">
+            android:layout_margin="8dp"
+            android:orientation="vertical" />
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RelativeLayout
-                    style="@style/Widget.CardContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/details_poster_view"
-                        android:layout_width="120dp"
-                        android:layout_height="180dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_above="@+id/details_synopsis"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@+id/details_poster_view"
-                        android:layout_toRightOf="@+id/details_poster_view"
-                        android:gravity="center_vertical"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/details_release_date"
-                            style="@style/text_style"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawableLeft="@drawable/ic_movie_creation"
-                            android:drawablePadding="5dp"
-                            android:drawableStart="@drawable/ic_movie_creation"
-                            android:maxLines="1" />
-
-                        <TextView
-                            android:id="@+id/details_vote_avg"
-                            style="@style/text_style"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:drawableLeft="@drawable/img_avg"
-                            android:drawablePadding="5dp"
-                            android:drawableStart="@drawable/img_avg"
-                            android:maxLines="1" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/details_synopsis"
-                        style="@style/overview_style"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/details_poster_view"
-                        android:layout_marginTop="8dp" />
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
-        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_favorite_border"
+        android:tint="@color/pink"
+        app:backgroundTint="@drawable/fab_selector"
+        app:fabSize="normal"
+        app:layout_anchor="@id/appbar_details_layout"
+        app:layout_anchorGravity="bottom|right|end" />
+
+    <include layout="@layout/nav_bar" />
 </android.support.design.widget.CoordinatorLayout>

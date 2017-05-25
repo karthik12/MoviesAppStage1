@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_synopsis"
+        android:enabled="true"
+        android:icon="@drawable/ic_assessment"
+        android:title="@string/synopsis"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_trailers"
+        android:enabled="true"
+        android:icon="@drawable/ic_ondemand_video"
+        android:title="@string/trailer"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_review"
+        android:enabled="true"
+        android:icon="@drawable/ic_people_outline"
+        android:title="@string/review"
+        app:showAsAction="ifRoom" />
+</menu>

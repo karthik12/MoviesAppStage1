@@ -11,6 +11,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Created by karthikeyanp on 2/12/2017.
  */
@@ -69,17 +73,16 @@ public class MoviesAdapter extends android.support.v7.widget.RecyclerView.Adapte
         notifyDataSetChanged();
     }
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView imageView;
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.mv_image_view) ImageView imageView;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.mv_image_view);
-            imageView.setOnClickListener(this);
+            ButterKnife.bind(this,itemView);
         }
 
-        @Override
-        public void onClick(View view) {
+        @OnClick(R.id.mv_image_view)
+        public void onClick() {
             recycleItemClickListener.recyclerViewListClicked(getLayoutPosition());
         }
     }

@@ -8,7 +8,8 @@ import java.io.Serializable;
 
 public enum SortOrder implements Serializable {
     TOP_RATED("top_rated"),
-    POPULAR("popular");
+    POPULAR("popular"),
+    FAV("fav");
 
     public String sortOrder;
 

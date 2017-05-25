@@ -5,41 +5,39 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
 /**
  * Created by karthikeyanp on 2/12/2017.
  */
 
 public class Movie implements Parcelable {
     @SerializedName("poster_path")
-    String posterPath;
+    public String posterPath;
     @SerializedName("adult")
-    String adult;
+    public String adult;
     @SerializedName("overview")
-    String overView;
+    public String overView;
     @SerializedName("release_date")
-    String releaseDate;
+    public String releaseDate;
     @SerializedName("genre_ids")
-    int[] genreIds;
+    public int[] genreIds;
     @SerializedName("id")
-    int id;
+    public int id;
     @SerializedName("original_title")
-    String originalTitle;
+    public String originalTitle;
     @SerializedName("original_language")
-    String originalLanguage;
+    public String originalLanguage;
     @SerializedName("title")
-    String title;
+    public String title;
     @SerializedName("backdrop_path")
-    String backdropPath;
+    public String backdropPath;
     @SerializedName("popularity")
-    float popularity;
+    public float popularity;
     @SerializedName("vote_count")
-    int voteCount;
+    public int voteCount;
     @SerializedName("video")
-    boolean video;
+    public boolean video;
     @SerializedName("vote_average")
-    float voteAverage;
+    public float voteAverage;
 
     protected Movie(Parcel in) {
         posterPath = in.readString();
@@ -69,6 +67,23 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    public Movie(String posterPath, String adult, String overView, String releaseDate, int[] genreIds, int id, String originalTitle, String originalLanguage, String title, String backdropPath, float popularity, int voteCount, boolean video, float voteAverage) {
+        this.posterPath = posterPath;
+        this.adult = adult;
+        this.overView = overView;
+        this.releaseDate = releaseDate;
+        this.genreIds = genreIds;
+        this.id = id;
+        this.originalTitle = originalTitle;
+        this.originalLanguage = originalLanguage;
+        this.title = title;
+        this.backdropPath = backdropPath;
+        this.popularity = popularity;
+        this.voteCount = voteCount;
+        this.video = video;
+        this.voteAverage = voteAverage;
+    }
 
     @Override
     public int describeContents() {

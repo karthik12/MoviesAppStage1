@@ -3,20 +3,12 @@ package com.example.karthikeyanp.popularmovies;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -35,20 +27,6 @@ public class DownloadTask extends AsyncTask<String, Void, Result> {
 
     private void setCallback(DownloadCallback<String> callback) {
         mCallback = callback;
-    }
-
-    private List<Movie> getMovieList(String resultString) {
-        if (TextUtils.isEmpty(resultString)) {
-            return null;
-        } else {
-            Gson gson = new Gson();
-            JsonElement jelem = gson.fromJson(resultString, JsonElement.class);
-            JsonObject jsonObject = jelem.getAsJsonObject();
-            JsonArray results = jsonObject.getAsJsonArray("results");
-            Type listType = new TypeToken<List<Movie>>() {
-            }.getType();
-            return gson.fromJson(results, listType);
-        }
     }
 
     /**
@@ -84,7 +62,7 @@ public class DownloadTask extends AsyncTask<String, Void, Result> {
                 stream = downloadUrl(url);
                 if (stream != null) {
                     String resultString = IOUtils.toString(stream, "UTF-8");
-                    List<Movie> movies= getMovieList(resultString);
+                    List<Movie> movies = MovieUtils.getMovieList(resultString);
                     result = new Result(movies);
                 } else {
                     throw new IOException("No response received.");
